@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MindEase - Mental Health Companion | Hack for Health</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-dark: #4338ca;
+      --secondary: #7c3aed;
+      --accent: #f59e0b;
+      --success: #10b981;
+      --bg-light: #f9fafb;
+      --text-dark: #1f2937;
+      --text-muted: #6b7280;
+      --shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(to bottom, #e0e7ff, #f3f4f6);
+      margin: 0;
+      padding: 0;
+      color: var(--text-dark);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    header {
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      color: white;
+      text-align: center;
+      padding: 3rem 1rem;
+      position: relative;
+      box-shadow: var(--shadow);
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1056,160,1152,176C1248,192,1344,192,1392,192L1440,192L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"></path></svg>') bottom no-repeat;
+      background-size: cover;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 3rem;
+      font-weight: 700;
+      position: relative;
+      z-index: 1;
+    }
+    header p {
+      margin: 0.5rem 0;
+      font-size: 1.2rem;
+      opacity: 0.9;
+      position: relative;
+      z-index: 1;
+    }
+    .intro {
+      text-align: center;
+      margin: 2rem auto;
+      font-size: 1.3rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      max-width: 700px;
+      padding: 0 1rem;
+      animation: fadeIn 1s ease;
+    }
+    .daily-tip {
+      background: rgba(255, 255, 255, 0.9);
+      border-left: 4px solid var(--accent);
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 8px;
+      font-style: italic;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+    .card {
+      background: white;
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.5s ease;
+      opacity: 0;
+      transform: translateY(50px);
+      margin-bottom: 2rem;
+    }
+    .card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(79,70,229,0.1) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .card h2 {
+      color: var(--primary);
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .mood-btn {
+      padding: 0.8rem 1.5rem;
+      border-radius: 50px;
+      border: none;
+      margin: 0.5rem;
+      cursor: pointer;
+      background: linear-gradient(to right, #e0e7ff, #c7d2fe);
+      color: var(--primary-dark);
+      font-weight: 600;
+      font-size: 1.1rem;
+      transition: all 0.3s;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    .mood-btn:hover {
+      background: linear-gradient(to right, #c7d2fe, #a5b4fc);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .btn {
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      color: white;
+      padding: 0.8rem 1.8rem;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1.1rem;
+      transition: all 0.3s;
+      box-shadow: 0 4px 10px rgba(79,70,229,0.2);
+      display: inline-block;
+      margin: 0.5rem;
+    }
+    .btn:hover {
+      background: linear-gradient(to right, var(--primary-dark), #6d28d9);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(79,70,229,0.3);
+    }
+    .media-btn {
+      background: linear-gradient(to right, var(--accent), #fbbf24);
+      color: var(--text-dark);
+      font-weight: bold;
+    }
+    .badge {
+      display: inline-block;
+      background: var(--success);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      margin: 0.5rem;
+      animation: badgePop 0.5s ease;
+    }
+    @keyframes badgePop {
+      from { transform: scale(0); }
+      to { transform: scale(1); }
+    }
+    .streak {
+      text-align: center;
+      font-size: 1.2rem;
+      color: var(--success);
+      font-weight: bold;
+    }
+    #moodChart {
+      width: 100%;
+      height: 200px;
+      margin: 1rem 0;
+    }
+    textarea, input, select {
+      width: 100%;
+      padding: 1rem;
+      margin: 0.75rem 0;
+      border-radius: 12px;
+      border: 1px solid #d1d5db;
+      font-size: 1rem;
+      box-sizing: border-box;
+      transition: border 0.3s;
+    }
+    textarea:focus, input:focus, select:focus {
+      border-color: var(--primary);
+      outline: none;
+    }
+    .circle {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: linear-gradient(to bottom, #e0e7ff, #c7d2fe);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 2rem auto;
+      font-weight: 700;
+      font-size: 1.4rem;
+      color: var(--primary-dark);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      transition: transform 1s ease, background 1s ease;
+      position: relative;
+      animation: pulse 2s infinite ease-in-out;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    .circle.inhale {
+      transform: scale(1.3);
+      background: linear-gradient(to bottom, #a5b4fc, #818cf8);
+    }
+    .circle.hold {
+      transform: scale(1.1);
+      background: linear-gradient(to bottom, #c7d2fe, #a5b4fc);
+    }
+    .circle.exhale {
+      transform: scale(0.8);
+      background: linear-gradient(to bottom, #e0e7ff, #c7d2fe);
+    }
+    .mood-tip {
+      background: linear-gradient(to right, #fef3c7, #fde68a);
+      color: #713f12;
+      padding: 1.5rem;
+      border-radius: 16px;
+      margin: 1.5rem 0;
+      position: relative;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      animation: popIn 0.6s ease;
+      display: none;
+    }
+    .mood-tip::before, .mood-tip::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-style: solid;
+    }
+    .mood-tip::before {
+      top: -10px;
+      left: 20px;
+      border-width: 0 10px 10px 10px;
+      border-color: transparent transparent #fde68a transparent;
+    }
+    .mood-tip::after {
+      bottom: -10px;
+      right: 20px;
+      border-width: 10px 10px 0 10px;
+      border-color: #fde68a transparent transparent transparent;
+    }
+    .corner-decor {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background: var(--accent);
+      clip-path: polygon(0 0, 100% 0, 0 100%);
+    }
+    .card .corner-decor.top-left {
+      top: 0;
+      left: 0;
+    }
+    .card .corner-decor.bottom-right {
+      bottom: 0;
+      right: 0;
+      clip-path: polygon(100% 100%, 100% 0, 0 100%);
+    }
+    .notes-section textarea {
+      min-height: 120px;
+    }
+    .progress-bar {
+      background: #e5e7eb;
+      height: 8px;
+      border-radius: 4px;
+      margin: 1rem 0;
+    }
+    .progress-fill {
+      background: var(--success);
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+    .media-suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      background: linear-gradient(to top, #f3f4f6, #e5e7eb);
+      color: var(--text-muted);
+      font-size: 1rem;
+      margin-top: 3rem;
+      position: relative;
+    }
+    footer a {
+      color: var(--primary);
+      text-decoration: none;
+      margin: 0 1rem;
+    }
+    footer::before {
+      content: '';
+      position: absolute;
+      bottom: 100%;
+      left: 0;
+      width: 100%;
+      height: 50px;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23f3f4f6" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1056,160,1152,176C1248,192,1344,192,1392,192L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') top no-repeat;
+      background-size: cover;
+    }
+    #welcomeModal, #loginModal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    #welcomeForm, #loginForm {
+      background: white;
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
+    #welcomeForm h2, #loginForm h2 {
+      color: var(--primary);
+    }
+    #progressBar {
+      background: #e5e7eb;
+      height: 4px;
+      width: 100%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 10;
+    }
+    #progressFill {
+      background: var(--success);
+      height: 100%;
+      width: 0;
+      transition: width 0.5s ease;
+    }
+    canvas { /* For confetti and chart */
+      display: block;
+      margin: 1rem auto;
+    }
+    @keyframes popIn {
+      from { transform: scale(0.7); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @media (max-width: 768px) {
+      header h1 { font-size: 2.5rem; }
+      .intro { font-size: 1.2rem; }
+      .card { padding: 1.5rem; }
+      .circle { width: 150px; height: 150px; font-size: 1.2rem; }
+      .media-suggestions { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div id="progressBar"><div id="progressFill"></div></div>
+  <header>
+    <h1><i class="fas fa-leaf"></i> MindEase</h1>
+    <p id="welcomeMessage">Your Premium Mental Health Companion</p>
+  </header>
+
+  <div class="intro">
+    <p>Discover balance and serenity with MindEase – your personalized guide to mood tracking, stress relief, and mindful living. Built for Hack for Health by Meerut Coders Community.</p>
+    <div class="daily-tip" id="dailyTip">Tip of the Day: Practice gratitude daily to boost happiness!</div>
+  </div>
+
+  <div class="container">
+    <!-- Mood Tracker -->
+    <div class="card" id="moodCard" style="display:none;" role="region" aria-label="Mood Tracker">
+      <div class="corner-decor top-left"></div>
+      <div class="corner-decor bottom-right"></div>
+      <h2><i class="fas fa-heart"></i> Daily Mood Tracker</h2>
+      <p>Select your current mood to get started.</p>
+      <div>
+        <button class="mood-btn" onclick="selectMood('happy')" aria-label="Happy Mood">😊 Happy</button>
+        <button class="mood-btn" onclick="selectMood('neutral')" aria-label="Neutral Mood">😐 Neutral</button>
+        <button class="mood-btn" onclick="selectMood('anxious')" aria-label="Anxious Mood">😰 Anxious</button>
+        <button class="mood-btn" onclick="selectMood('sad')" aria-label="Sad Mood">😢 Sad</button>
+        <button class="mood-btn" onclick="selectMood('stressed')" aria-label="Stressed Mood">😩 Stressed</button>
+        <button class="mood-btn" onclick="selectMood('excited')" aria-label="Excited Mood">🤩 Excited</button>
+      </div>
+      <div id="moodTip" class="mood-tip"></div>
+      <textarea id="moodNote" placeholder="Share more about your mood..." aria-label="Mood Notes"></textarea>
+      <button class="btn" id="saveMoodBtn" onclick="saveMood()" aria-label="Save Mood">Save Mood</button>
+      <canvas id="moodChart" width="400" height="200"></canvas>
+      <div id="moodHistory"></div>
+      <div class="streak" id="streakDisplay">Streak: 0 days</div>
+      <div id="badges"></div>
+    </div>
+
+    <!-- Daily Reflections -->
+    <div class="card" id="reflectionsCard" style="display:none;" role="region" aria-label="Daily Reflections">
+      <div class="corner-decor top-left"></div>
+      <div class="corner-decor bottom-right"></div>
+      <h2><i class="fas fa-lightbulb"></i> Daily Reflections</h2>
+      <textarea id="growthNote" placeholder="What personal growth did you experience today?" aria-label="Growth Notes"></textarea>
+      <textarea id="highlightNote" placeholder="What was the highlight of your day?" aria-label="Highlight Notes"></textarea>
+      <textarea id="feelingNote" placeholder="How are you feeling overall?" aria-label="Overall Feeling"></textarea>
+      <button class="btn" onclick="saveReflections()" aria-label="Save Reflections">Save Reflections</button>
+      <div id="reflectionsHistory"></div>
+    </div>
+
+    <!-- Breathing Exercise -->
+    <div class="card" id="breathingCard" style="display:none;" role="region" aria-label="Breathing Exercise">
+      <div class="corner-decor top-left"></div>
+      <div class="corner-decor bottom-right"></div>
+      <h2><i class="fas fa-wind"></i> 4-7-8 Breathing Exercise</h2>
+      <p id="breathingIntro"></p>
+      <div id="circle" class="circle" aria-live="polite">Ready to Breathe</div>
+      <div class="progress-bar"><div id="breathingProgress" class="progress-fill"></div></div>
+      <button class="btn" id="breathingBtn" onclick="toggleBreathing()" aria-label="Start Breathing Session">Start Session</button>
+      <p id="breathingDuration"></p>
+      <p id="cycleCount" style="text-align:center; font-weight:600;">Cycles Completed: 0</p>
+      <div id="breathingHistory"></div>
+    </div>
+
+    <!-- Personalized Wellness Guide -->
+    <div class="card" id="wellnessCard" style="display:none;" role="region" aria-label="Wellness Guide">
+      <div class="corner-decor top-left"></div>
+      <div class="corner-decor bottom-right"></div>
+      <h2><i class="fas fa-seedling"></i> Personalized Wellness Guide</h2>
+      <p id="wellnessIntro">Explore tailored activities to boost your well-being.</p>
+      <div id="wellnessSuggestions"></div>
+      <div class="media-suggestions" id="mediaSuggestions"></div>
+      <button class="btn" onclick="generateWellnessSuggestion()" aria-label="Get New Suggestion">Get New Suggestion</button>
+      <textarea id="wellnessNote" placeholder="Reflect on this activity or add your thoughts..." aria-label="Wellness Notes"></textarea>
+      <button class="btn" onclick="saveWellnessNote()" aria-label="Save Wellness Note">Save Note</button>
+      <div id="wellnessHistory"></div>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 MindEase. Built for Hack for Health. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a> | <a href="#">Contact Us</a></p>
+    <button class="btn" onclick="resetJourney()" style="margin-top: 1rem; font-size: 0.9rem;">Reset Journey (Demo)</button>
+  </footer>
+
+  <!-- Welcome Modal -->
+  <div id="welcomeModal" style="display: none;">
+    <div id="welcomeForm">
+      <h2>Welcome to MindEase!</h2>
+      <p>Please enter your details for a personalized experience.</p>
+      <input id="userNameInput" placeholder="Your Name" required aria-label="Name" />
+      <select id="userGender" required aria-label="Gender">
+        <option value="">Select Gender</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+        <option value="other">Other</option>
+        <option value="prefer_not_to_say">Prefer not to say</option>
+      </select>
+      <input id="userAge" type="number" placeholder="Your Age" min="1" max="120" required aria-label="Age" />
+      <button class="btn" onclick="saveUserDetails()" aria-label="Start Journey">Start Journey</button>
+    </div>
+  </div>
+
+  <!-- Login Modal -->
+  <div id="loginModal">
+    <div id="loginForm">
+      <h2>Login to MindEase</h2>
+      <p>Enter your credentials to access your data.</p>
+      <input id="loginName" placeholder="Your Name" required aria-label="Login Name" />
+      <input id="loginPassword" type="password" placeholder="Password" required aria-label="Password" />
+      <button class="btn" onclick="handleLogin()" aria-label="Login">Login</button>
+      <p>Don't have an account? <a href="#" onclick="showSignup()">Sign Up</a></p>
+    </div>
+  </div>
+
+  <canvas id="confettiCanvas" style="position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999;"></canvas>
+
+  <script>
+    // User Details and Authentication (unchanged from previous)
+    let userDetails = JSON.parse(localStorage.getItem('userDetails')) || null;
+    let isLoggedIn = false;
+    let currentStep = 0;
+    const steps = ['moodCard', 'reflectionsCard', 'breathingCard', 'wellnessCard'];
+    const progressFill = document.getElementById('progressFill');
+    const phases = [
+      { name: 'inhale', text: 'Inhale Deeply (4s)', duration: 4000 },
+      { name: 'hold', text: 'Hold Breath (7s)', duration: 7000 },
+      { name: 'exhale', text: 'Exhale Slowly (8s)', duration: 8000 }
+    ];
+    let currentPhase = 0;
+    let gamificationData = JSON.parse(localStorage.getItem('gamificationData')) || { streaks: 0, badges: [] };
+
+    // Audio Context for Breathing Sounds (unchanged)
+    let audioContext = null;
+
+    function initAudio() {
+      if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    function playBeep(frequency = 440, duration = 200) {
+      initAudio();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      oscillator.frequency.value = frequency;
+      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration / 1000);
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + duration / 1000);
+    }
+
+    function updateProgress() {
+      const progress = (currentStep / steps.length) * 100;
+      progressFill.style.width = `${progress}%`;
+    }
+
+    function showNextCard() {
+      if (currentStep > 0) {
+        document.getElementById(steps[currentStep - 1]).style.display = 'none';
+      }
+      if (currentStep < steps.length) {
+        const card = document.getElementById(steps[currentStep]);
+        card.style.display = 'block';
+        setTimeout(() => card.classList.add('visible'), 100);
+        currentStep++;
+        updateProgress();
+      }
+    }
+
+    function showSignup() {
+      document.getElementById('loginModal').style.display = 'none';
+      document.getElementById('welcomeModal').style.display = 'flex';
+    }
+
+    function saveUserDetails() {
+      const name = document.getElementById('userNameInput').value.trim();
+      const gender = document.getElementById('userGender').value;
+      const age = document.getElementById('userAge').value;
+      const password = prompt('Create a password for your account:');
+      if (!name || !gender || !age || !password) return alert('Please fill all fields.');
+      userDetails = { name, gender, age: parseInt(age), password };
+      localStorage.setItem('userDetails', JSON.stringify(userDetails));
+      document.getElementById('welcomeModal').style.display = 'none';
+      document.getElementById('welcomeMessage').innerText = `Hello, ${userDetails.name}! Your Premium Mental Health Companion`;
+      isLoggedIn = true;
+      showNextCard(); // Start with Mood Tracker
+    }
+
+    function handleLogin() {
+      const name = document.getElementById('loginName').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      if (userDetails && userDetails.name === name && userDetails.password === password) {
+        document.getElementById('loginModal').style.display = 'none';
+        document.getElementById('welcomeMessage').innerText = `Welcome back, ${userDetails.name}!`;
+        isLoggedIn = true;
+        showNextCard();
+      } else {
+        alert('Invalid credentials. Try again or sign up.');
+      }
+    }
+
+    if (userDetails) {
+      document.getElementById('welcomeModal').style.display = 'none';
+      document.getElementById('loginModal').style.display = 'flex';
+    } else {
+      showSignup();
+    }
+
+    // Daily Tip Rotation (unchanged)
+    const dailyTips = [
+      "Tip of the Day: Practice gratitude daily to boost happiness!",
+      "Tip of the Day: Take 5 deep breaths to reset your mind.",
+      "Tip of the Day: Journal three things you're thankful for.",
+      "Tip of the Day: Move your body for 10 minutes to lift your mood.",
+      "Tip of the Day: Connect with a friend – it reduces stress!"
+    ];
+    document.getElementById('dailyTip').innerText = dailyTips[Math.floor(Math.random() * dailyTips.length)];
+
+    // Gamification (unchanged)
+    function updateStreak() {
+      const today = new Date().toDateString();
+      const lastEntry = localStorage.getItem('lastMoodDate');
+      if (lastEntry === today) {
+        gamificationData.streaks++;
+      } else {
+        gamificationData.streaks = 1;
+      }
+      localStorage.setItem('gamificationData', JSON.stringify(gamificationData));
+      localStorage.setItem('lastMoodDate', today);
+      document.getElementById('streakDisplay').innerText = `Streak: ${gamificationData.streaks} days`;
+    }
+
+    function awardBadge(type) {
+      if (!gamificationData.badges.includes(type)) {
+        gamificationData.badges.push(type);
+        localStorage.setItem('gamificationData', JSON.stringify(gamificationData));
+        const badgeEl = document.createElement('div');
+        badgeEl.className = 'badge';
+        badgeEl.innerText = type.charAt(0).toUpperCase() + type.slice(1) + ' Badge Earned!';
+        document.getElementById('badges').appendChild(badgeEl);
+      }
+    }
+
+    function resetJourney() {
+      if (confirm('Reset all data? (For demo purposes)')) {
+        localStorage.clear();
+        location.reload();
+      }
+    }
+
+    // Mood Tracker (unchanged except for media trigger in selectMood if needed)
+    let moods = JSON.parse(localStorage.getItem('moods')) || [];
+    let selectedMood = null;
+
+    const moodTips = {
+      happy: `Embrace the joy, %name%! Try sharing your positivity with a friend or journaling what made you smile.`,
+      neutral: `A neutral day is a fresh canvas, %name%. How about a small act of kindness or a quick walk?`,
+      anxious: `Take it slow, %name%. Ground yourself with deep breaths or the 5-4-3-2-1 technique.`,
+      sad: `It's okay to feel low, %name%. Reach out to someone or write down what’s weighing on you.`,
+      stressed: `Let’s ease that stress, %name%. Try a mindfulness exercise or listen to calming music.`,
+      excited: `Channel that energy, %name%! What’s got you buzzing? Plan something fun to keep it going.`
+    };
+
+    function selectMood(mood) {
+      selectedMood = mood;
+      const moodTip = document.getElementById('moodTip');
+      moodTip.innerHTML = `<p><strong>Personal Tip:</strong> ${moodTips[mood].replace('%name%', userDetails.name)}</p>`;
+      moodTip.style.display = 'block';
+      document.getElementById('saveMoodBtn').style.display = 'inline-block';
+      if (mood === 'happy' || mood === 'excited') {
+        launchConfetti();
+      }
+    }
+
+    function saveMood() {
+      if (!selectedMood) return alert('Select a mood first.');
+      const note = document.getElementById('moodNote').value;
+      const entry = { mood: selectedMood, note, timestamp: new Date().toLocaleString() };
+      moods.push(entry);
+      localStorage.setItem('moods', JSON.stringify(moods));
+      document.getElementById('moodNote').value = '';
+      document.getElementById('moodTip').style.display = 'none';
+      renderMoods();
+      renderMoodChart();
+      updateStreak();
+      awardBadge('Mood Tracker');
+      document.getElementById('breathingIntro').innerText = `Great, ${userDetails.name}. Let's breathe together for clarity.`;
+      selectedMood = null;
+      document.getElementById('saveMoodBtn').style.display = 'none';
+      showNextCard(); // Show Reflections
+    }
+
+    function renderMoods() {
+      const div = document.getElementById('moodHistory');
+      div.innerHTML = '<h3>Your Mood History:</h3>' + moods.map(m => `<p><i class="fas fa-calendar-alt"></i> ${m.timestamp}: <strong>${m.mood}</strong> - ${m.note}</p>`).join('');
+    }
+
+    // Mood Chart Visualization (unchanged)
+    function renderMoodChart() {
+      const canvas = document.getElementById('moodChart');
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (moods.length === 0) return;
+      const moodsReversed = moods.slice(-10).reverse(); // Last 10 moods
+      const moodValues = moodsReversed.map(m => {
+        const values = { happy: 4, neutral: 3, anxious: 2, sad: 1, stressed: 2, excited: 4 };
+        return values[m.mood] || 3;
+      });
+      const maxY = canvas.height - 20;
+      const stepX = canvas.width / (moodsReversed.length - 1 || 1);
+      ctx.beginPath();
+      ctx.strokeStyle = '#4f46e5';
+      ctx.lineWidth = 3;
+      ctx.moveTo(0, maxY - moodValues[0] * 40);
+      for (let i = 1; i < moodValues.length; i++) {
+        ctx.lineTo(i * stepX, maxY - moodValues[i] * 40);
+      }
+      ctx.stroke();
+    }
+
+    // Confetti Animation (unchanged)
+    function launchConfetti() {
+      const canvas = document.getElementById('confettiCanvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      const particles = [];
+      for (let i = 0; i < 100; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          size: Math.random() * 5 + 5,
+          speed: Math.random() * 3 + 1,
+          color: `hsl(${Math.random() * 360}, 70%, 60%)`
+        });
+      }
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => {
+          p.y += p.speed;
+          ctx.fillStyle = p.color;
+          ctx.fillRect(p.x, p.y, p.size, p.size);
+          if (p.y > canvas.height) p.y = -p.size;
+        });
+        requestAnimationFrame(animate);
+      }
+      animate();
+      setTimeout(() => canvas.width = 0, 3000); // Stop after 3s
+    }
+
+    // Reflections (unchanged)
+    let reflections = JSON.parse(localStorage.getItem('reflections')) || [];
+
+    function saveReflections() {
+      const growth = document.getElementById('growthNote').value;
+      const highlight = document.getElementById('highlightNote').value;
+      const feeling = document.getElementById('feelingNote').value;
+      if (!growth && !highlight && !feeling) return alert('Add at least one reflection.');
+      const entry = { growth, highlight, feeling, timestamp: new Date().toLocaleString() };
+      reflections.push(entry);
+      localStorage.setItem('reflections', JSON.stringify(reflections));
+      document.getElementById('growthNote').value = '';
+      document.getElementById('highlightNote').value = '';
+      document.getElementById('feelingNote').value = '';
+      renderReflections();
+      awardBadge('Reflector');
+      showNextCard(); // Show Breathing
+    }
+
+    function renderReflections() {
+      const div = document.getElementById('reflectionsHistory');
+      div.innerHTML = '<h3>Saved Reflections:</h3>' + reflections.map(r => `
+        <p><i class="fas fa-calendar-alt"></i> ${r.timestamp}: <br>
+        <strong>Growth:</strong> ${r.growth}<br>
+        <strong>Highlight:</strong> ${r.highlight}<br>
+        <strong>Feeling:</strong> ${r.feeling}</p>`).join('');
+    }
+
+    // Breathing Exercise (unchanged)
+    let breathing = false;
+    let breathingInterval = null;
+    let breathingStart = null;
+    let cycleCount = 0;
+    let breathingHistory = JSON.parse(localStorage.getItem('breathingHistory')) || [];
+    const breathingProgress = document.getElementById('breathingProgress');
+    const circle = document.getElementById('circle');
+    const breathingBtn = document.getElementById('breathingBtn');
+
+    function toggleBreathing() {
+      if (breathing) {
+        stopBreathing();
+      } else {
+        startBreathing();
+      }
+    }
+
+    function startBreathing() {
+      breathing = true;
+      cycleCount = 0;
+      currentPhase = 0;
+      breathingStart = Date.now();
+      breathingBtn.innerText = 'Stop Session';
+      circle.style.animation = 'pulse 2s infinite ease-in-out';
+      document.getElementById('breathingDuration').innerText = 'Session started... Breathe along!';
+      playBeep(440, 200); // Start beep
+      updatePhase();
+    }
+
+    function updatePhase() {
+      if (!breathing) return;
+      const phase = phases[currentPhase];
+      circle.innerText = phase.text;
+      circle.classList = `circle ${phase.name}`;
+      playBeep(600, 100); // Phase beep
+      const phaseStart = Date.now();
+      const updateProgress = () => {
+        if (!breathing) return;
+        const elapsed = Date.now() - phaseStart;
+        const progress = Math.min((elapsed / phase.duration) * 100, 100);
+        breathingProgress.style.width = `${progress}%`;
+        if (elapsed < phase.duration) requestAnimationFrame(updateProgress);
+      };
+      requestAnimationFrame(updateProgress);
+      breathingInterval = setTimeout(() => {
+        currentPhase = (currentPhase + 1) % phases.length;
+        if (currentPhase === 0) {
+          cycleCount++;
+          document.getElementById('cycleCount').innerText = `Cycles Completed: ${cycleCount}`;
+          playBeep(800, 300); // Cycle complete beep
+          if (cycleCount >= 3) {
+            awardBadge('Breath Master');
+            alert('Badge Earned: Breath Master! 🎉');
+          }
+        }
+        updatePhase();
+      }, phase.duration);
+    }
+
+    function stopBreathing() {
+      breathing = false;
+      clearTimeout(breathingInterval);
+      circle.innerText = 'Session Ended';
+      circle.classList = 'circle';
+      circle.style.animation = 'none';
+      breathingBtn.innerText = 'Start Session';
+      breathingProgress.style.width = '0%';
+      const duration = ((Date.now() - breathingStart) / 1000).toFixed(1);
+      document.getElementById('breathingDuration').innerText = `Session lasted: ${duration} seconds`;
+      const entry = { cycles: cycleCount, duration, timestamp: new Date().toLocaleString() };
+      breathingHistory.push(entry);
+      localStorage.setItem('breathingHistory', JSON.stringify(breathingHistory));
+      renderBreathingHistory();
+      showNextCard(); // Show Wellness Guide
+    }
+
+    function renderBreathingHistory() {
+      const div = document.getElementById('breathingHistory');
+      div.innerHTML = '<h3>Breathing History:</h3>' + breathingHistory.map(h => `<p><i class="fas fa-calendar-alt"></i> ${h.timestamp}: ${h.cycles} cycles, ${h.duration}s</p>`).join('');
+    }
+
+    // Personalized Wellness Guide with Media Suggestions
+    let wellnessHistory = JSON.parse(localStorage.getItem('wellnessHistory')) || [];
+    const wellnessSuggestions = {
+      happy: [
+        { type: 'activity', text: 'Write a gratitude list to amplify your joy.' },
+        { type: 'meditation', text: 'Try a 5-minute gratitude meditation to stay grounded.' },
+        { type: 'prompt', text: 'What’s one thing that made you smile today?' },
+        { type: 'affirmation', text: 'I radiate positivity and inspire others.' }
+      ],
+      neutral: [
+        { type: 'activity', text: 'Take a 10-minute walk to refresh your mind.' },
+        { type: 'meditation', text: 'Do a 3-minute mindfulness meditation.' },
+        { type: 'prompt', text: 'What’s one small goal you can set for today?' },
+        { type: 'affirmation', text: 'I am open to new possibilities today.' }
+      ],
+      anxious: [
+        { type: 'activity', text: 'Practice the 5-4-3-2-1 grounding technique.' },
+        { type: 'meditation', text: 'Try a 5-minute body scan meditation.' },
+        { type: 'prompt', text: 'What’s one thing you can control right now?' },
+        { type: 'affirmation', text: 'I am safe and in control of my thoughts.' },
+        { type: 'media', text: 'Unwind with a 45-min session: Calming music + anti-overthinking reels!' }
+      ],
+      sad: [
+        { type: 'activity', text: 'Call a friend or loved one for a chat.' },
+        { type: 'meditation', text: 'Do a 5-minute self-compassion meditation.' },
+        { type: 'prompt', text: 'What’s one thing that brings you comfort?' },
+        { type: 'affirmation', text: 'I am enough, and I am healing.' },
+        { type: 'media', text: 'Unwind with a 45-min session: Calming music + anti-overthinking reels!' }
+      ],
+      stressed: [
+        { type: 'activity', text: 'Listen to calming music for 10 minutes.' },
+        { type: 'meditation', text: 'Try a 5-minute deep breathing meditation.' },
+        { type: 'prompt', text: 'What’s one thing you can let go of today?' },
+        { type: 'affirmation', text: 'I release tension and embrace calm.' },
+        { type: 'media', text: 'Unwind with a 45-min session: Calming music + anti-overthinking reels!' }
+      ],
+      excited: [
+        { type: 'activity', text: 'Plan a fun activity to channel your energy.' },
+        { type: 'meditation', text: 'Do a 3-minute visualization meditation.' },
+        { type: 'prompt', text: 'What’s fueling your excitement today?' },
+        { type: 'affirmation', text: 'My energy creates amazing opportunities.' }
+      ]
+    };
+
+    // Media Links for Overthinking Reduction
+    const mediaLinks = {
+      spotify: 'https://open.spotify.com/playlist/6lXqMS7eIH1S2gcXBVcihd?si=...', // Sleep Music For Overthinkers 
+      youtubeMusic: 'https://www.youtube.com/watch?v=RmrVwqbYbFU', // Beautiful Relaxing Music - Stop Overthinking 
+      tiktokReel: 'https://www.tiktok.com/@soniquepitout/video/7539859871919787282', // Overcoming a Racing Mind 
+      youtubeReel: 'https://www.youtube.com/watch?v=tK2LaefZcy8', // 6 Therapy Skills to Stop Overthinking 
+      facebookReel: 'https://www.facebook.com/goodmentalhealth/videos/538158575655083/' // Good Mental Health on Reels 
+    };
+
+    function generateWellnessSuggestion() {
+      const latestMood = moods[moods.length - 1]?.mood || 'neutral';
+      const suggestions = wellnessSuggestions[latestMood] || wellnessSuggestions.neutral;
+      const suggestion = suggestions[Math.floor(Math.random() * suggestions.length)];
+      const ageFactor = userDetails.age < 30 ? 'Try something quick and engaging' : 'Consider a reflective activity';
+      const genderText = userDetails.gender === 'prefer_not_to_say' || userDetails.gender === 'other' ? '' : ` suitable for ${userDetails.gender}s`;
+      document.getElementById('wellnessSuggestions').innerHTML = `
+        <p><strong>${suggestion.type.charAt(0).toUpperCase() + suggestion.type.slice(1)}:</strong> ${suggestion.text} (${ageFactor}${genderText})</p>
+      `;
+      document.getElementById('wellnessIntro').innerText = `Here’s a tailored suggestion for you, ${userDetails.name}, based on your mood.`;
+
+      // Add Media Suggestions for Overthinking Moods
+      const mediaDiv = document.getElementById('mediaSuggestions');
+      if (['anxious', 'sad', 'stressed'].includes(latestMood) && suggestion.type === 'media') {
+        mediaDiv.innerHTML = `
+          <p><strong>45-Min Unwind Session:</strong> Pair your activity with calming media to quiet overthinking!</p>
+          <div class="media-suggestions">
+            <button class="btn media-btn" onclick="window.open('${mediaLinks.spotify}', '_blank')"><i class="fab fa-spotify"></i> Spotify Playlist</button>
+            <button class="btn media-btn" onclick="window.open('${mediaLinks.youtubeMusic}', '_blank')"><i class="fab fa-youtube"></i> YouTube Music</button>
+            <button class="btn media-btn" onclick="window.open('${mediaLinks.tiktokReel}', '_blank')"><i class="fab fa-tiktok"></i> TikTok Reel</button>
+            <button class="btn media-btn" onclick="window.open('${mediaLinks.youtubeReel}', '_blank')"><i class="fab fa-youtube"></i> YouTube Tips</button>
+            <button class="btn media-btn" onclick="window.open('${mediaLinks.facebookReel}', '_blank')"><i class="fab fa-facebook"></i> Facebook Reels</button>
+          </div>
+        `;
+      } else {
+        mediaDiv.innerHTML = '';
+      }
+
+      awardBadge('Wellness Explorer');
+    }
+
+    function saveWellnessNote() {
+      const note = document.getElementById('wellnessNote').value;
+      if (!note) return alert('Please add a note.');
+      const entry = { note, suggestion: document.getElementById('wellnessSuggestions').innerText, timestamp: new Date().toLocaleString() };
+      wellnessHistory.push(entry);
+      localStorage.setItem('wellnessHistory', JSON.stringify(wellnessHistory));
+      document.getElementById('wellnessNote').value = '';
+      renderWellnessHistory();
+      generateWellnessSuggestion(); // Refresh suggestion
+    }
+
+    function renderWellnessHistory() {
+      const div = document.getElementById('wellnessHistory');
+      div.innerHTML = '<h3>Wellness History:</h3>' + wellnessHistory.map(w => `
+        <p><i class="fas fa-calendar-alt"></i> ${w.timestamp}: <br>
+        <strong>Suggestion:</strong> ${w.suggestion}<br>
+        <strong>Note:</strong> ${w.note}</p>`).join('');
+    }
+
+    // Initialize (unchanged)
+    renderMoods();
+    renderReflections();
+    renderBreathingHistory();
+    renderWellnessHistory();
+    renderMoodChart();
+    if (isLoggedIn && moods.length > 0) generateWellnessSuggestion();
+  </script>
+</body>
+</html>
